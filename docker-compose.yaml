@@ -10,3 +10,10 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
     # entrypoint: bash -c 'go build && ./aws-deploy-go'
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - ./jovem-aprendiz-bot/conf/.env
+    entrypoint: python ./telegram.py
