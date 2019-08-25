@@ -1,3 +1,5 @@
 aiogram==2.3
+aiomongo==0.1
 python-dotenv==0.10.3
-pymongo==3.9.0
+pymongo==3.4.0
+emoji==0.5.3

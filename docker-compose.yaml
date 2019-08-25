@@ -14,9 +14,16 @@ services:
     environment:
       ME_CONFIG_MONGODB_SERVER: db
   app:
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - ./jovem-aprendiz-bot:/app
     env_file:
       - ./jovem-aprendiz-bot/conf/.env
     entrypoint: python ./telegram.py
+    links:
+      - db
+    depends_on:
+      - db
