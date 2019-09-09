@@ -7,6 +7,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 from aiogram.contrib.fsm_storage.mongo import MongoStorage
+from twitter import Twitter
 
 from conf.settings import TELEGRAM_TOKEN, MONGO_HOST, MONGO_PORT, MONGO_DB_NAME
 
@@ -24,29 +25,61 @@ class Form(StatesGroup):
     targets = State()
 
 
-@dp.message_handler(commands=['start', 'twitter'], state='*')
+@dp.message_handler(commands=['start', 'entrar'], state='*')
 async def send_welcome(message: types.Message):
     """
     This handler will be called when user sends `/start` or `/twitter` command
     """
 
     # Insert keyboard to user
-    add_account_btn = types.InlineKeyboardButton(
-        'Adicionar nova conta', callback_data='new_account')
-    show_tweets_btn = types.InlineKeyboardButton(
-        'Ver contas cadastradas', callback_data='accounts')
-    reply_markup = types.InlineKeyboardMarkup(
-        row_width=2).add(add_account_btn, show_tweets_btn)
-
+    # add_account_btn = types.InlineKeyboardButton(
+    #     'Adicionar nova conta', callback_data='new_account')
+    # show_tweets_btn = types.InlineKeyboardButton(
+    #     'Ver contas cadastradas', callback_data='accounts')
     initial_msg = ('Olá!\n\n'
-                   'Eu sou o Jovem Aprendiz, tô aqui pra te ajudar a'
-                   'monitorar perfis e realizar postagens.'
-                   '\n\nComo posso te ajudar?')
+                   'Eu sou o Jovem Aprendiz, tô aqui pra te ajudar a '
+                   'monitorar perfis e realizar postagens no twitter.'
+                   'Por favor acesse o link abaixo para autorizar o acesso:'
+                   )
 
-    await message.reply(
+    twitter = Twitter()
+    url_login = twitter.login()
+
+    auth_btn = types.InlineKeyboardButton(
+        'Autorizar Twitter', url=url_login)
+    reply_markup = types.InlineKeyboardMarkup(
+        row_width=1).add(auth_btn)
+
+    await bot.send_message(
+        message.from_user.id,
         initial_msg,
-        reply_markup=reply_markup,
+        reply_markup=reply_markup
     )
+
+
+# @dp.message_handler(commands=['start', 'twitter'], state='*')
+# async def send_welcome(message: types.Message):
+#     """
+#     This handler will be called when user sends `/start` or `/twitter` command
+#     """
+
+#     # Insert keyboard to user
+#     add_account_btn = types.InlineKeyboardButton(
+#         'Adicionar nova conta', callback_data='new_account')
+#     show_tweets_btn = types.InlineKeyboardButton(
+#         'Ver contas cadastradas', callback_data='accounts')
+#     reply_markup = types.InlineKeyboardMarkup(
+#         row_width=2).add(add_account_btn, show_tweets_btn)
+
+#     initial_msg = ('Olá!\n\n'
+#                    'Eu sou o Jovem Aprendiz, tô aqui pra te ajudar a '
+#                    'monitorar perfis e realizar postagens no twitter.'
+#                    '\n\nComo posso te ajudar?')
+
+#     await message.reply(
+#         initial_msg,
+#         reply_markup=reply_markup,
+#     )
 
 
 # @dp.message_handler(commands=['new'])
